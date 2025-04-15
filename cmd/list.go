@@ -1,11 +1,12 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
+	"os"
+	"task/internal/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -15,9 +16,23 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "To list all the tasks",
 	Long: `To list all the tasks`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("list called")
-	},
+	Run:   listTodo,
+}
+
+func listTodo(cmd *cobra.Command, args []string) {
+	todos, err := utils.ReadFile()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	for i, todo := range todos {
+		prefix := "   "
+		if todo.Done {
+			prefix = "✔️ "
+		}
+		fmt.Printf("%v%d:\t %v\t %s\n", prefix, i+1, todo.Task, todo.CreatedAt)
+	}
 }
 
 func init() {

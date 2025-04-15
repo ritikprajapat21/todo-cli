@@ -1,11 +1,13 @@
 /*
 Copyright © 2025 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
+	"os"
+	"strconv"
+	"task/internal/utils"
 
 	"github.com/spf13/cobra"
 )
@@ -16,7 +18,26 @@ var updateCmd = &cobra.Command{
 	Short: "To update the status of a task to complete status",
 	Long: `To update the status of a task to complete status`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("update called")
+		pos, err := strconv.ParseInt(args[0], 10, 64)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		todos, err := utils.ReadFile()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		todos[pos - 1].Done = true
+
+		if err := utils.SaveTodoAll(todos); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		fmt.Println("Todo updated")
 	},
 }
 

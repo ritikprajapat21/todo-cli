@@ -1,12 +1,15 @@
 /*
-Copyright © 2025 NAME HERE <EMAIL ADDRESS>
+Copyright © 2025 RITIK PRAJAPAT <ritikprajapati084@gmail.com>
 */
 package cmd
 
 import (
 	"fmt"
 	"os"
+	"strings"
+	"task/internal/types"
 	"task/internal/utils"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -16,11 +19,17 @@ var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "To add a new task",
 	Long:  `To add a new task`,
-	Run:   run,
+	Run:   addTodo,
 }
 
-func run(cmd *cobra.Command, args []string) {
-	err := utils.SaveFile(args)
+func addTodo(cmd *cobra.Command, args []string) {
+	data := types.Todo{
+		Task:      strings.Join(args, " "),
+		Done:      false,
+		CreatedAt: time.Now(),
+	}
+
+	err := utils.SaveTodo(data)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
